@@ -65,11 +65,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Generate a file
+        run: |
+          truncate -s ${{ github.event.inputs.size }} ${{ github.event.inputs.name }}
+          echo "Created file ${{ github.event.inputs.name }} (${{ github.event.inputs.size }})"
+
       - name: Upload artifact as ${{ github.event.inputs.name }}-by-name.${{ matrix.os }}
         uses: actions/upload-artifact@v1
         with:
           name: ${{ github.event.inputs.name }}-by-name.${{ matrix.os }}
           path: ${{ github.event.inputs.name }}
+
       - name: Delete Artifact by Name
         uses: ./
         with:
