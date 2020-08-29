@@ -41,13 +41,17 @@ inputs:
       The minimum file size in bytes. The default is 0, effectively meaning it will start off by matching all files.
 
       Consider applying another filter such as name or pattern if you'd like to avoid deleting everything.
+
+      **NOTE** This value must be a quoted integer.
   max_bytes:
     required: false
     description: >
       The maximum file size in bytes. If not specified, there is no limit.
 
       This option is useful if you have many small artifacts and want to keep a specific larger artifact.
-  name:
+
+      **NOTE** This value must be a quoted integer.
+  artifact_name:
     required: false
     description: >
       The name of a specific artifact to delete. If not specified, this may result in _all_ artifacts being deleted.
@@ -67,7 +71,6 @@ inputs:
       This format follows the [go Duration](https://golang.org/pkg/time/#ParseDuration) formatting.
   log_level:
     required: false
-    default: "info"
     description: >
       Specifies a custom log level.
 
@@ -88,6 +91,6 @@ branding:
   color: 'blue'
 runs:
   using: docker
-  image: docker://jimschubert/delete-artifacts-action:latest
-  # image: Dockerfile
+#  image: docker://jimschubert/delete-artifacts-action:latest
+  image: Dockerfile
 

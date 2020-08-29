@@ -31,7 +31,7 @@ func main() {
 		// allow for local testing
 		githubToken, ok = os.LookupEnv("GITHUB_TOKEN")
 		if !ok {
-			log.Fatal("Missing input 'GITHUB_TOKEN' in labeler action configuration.")
+			log.Fatal("Missing input 'GITHUB_TOKEN' in action configuration.")
 		}
 	}
 
@@ -43,15 +43,26 @@ func main() {
 	runIdInput := act.GetInput("run_id")
 	minBytesInput := act.GetInput("min_bytes")
 	maxBytesInput := act.GetInput("max_bytes")
-	nameInput := act.GetInput("name")
+	nameInput := act.GetInput("artifact_name")
 	patternInput := act.GetInput("pattern")
 	activeDurationInput := act.GetInput("active_duration")
 	dryRunInput := act.GetInput("dry_run")
 	logLevel := act.GetInput("log_level")
 
+	log.WithFields(log.Fields{
+		"runIdInput": runIdInput,
+		"minBytesInput": minBytesInput,
+		"maxBytesInput": maxBytesInput,
+		"nameInput": nameInput,
+		"patternInput": patternInput,
+		"activeDurationInput": activeDurationInput,
+		"dryRunInput": dryRunInput,
+		"logLevel": logLevel,
+	}).Info("Input arguments")
+
 	level, err := log.ParseLevel(logLevel)
 	if err != nil {
-		level = log.InfoLevel
+		level = log.DebugLevel
 	}
 
 	_ = os.Setenv("GITHUB_TOKEN", githubToken)
