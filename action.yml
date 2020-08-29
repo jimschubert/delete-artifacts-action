@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Delete Artifacts Action
+name: Delete Artifacts
 author: Jim Schubert
 description: Clean up those artifacts and save yourself some headaches
 inputs:
