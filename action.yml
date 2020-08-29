@@ -91,6 +91,6 @@ branding:
   color: 'blue'
 runs:
   using: docker
-#  image: docker://jimschubert/delete-artifacts-action:latest
-  image: Dockerfile
+  image: docker://jimschubert/delete-artifacts-action:latest
+#  image: Dockerfile
 

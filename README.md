@@ -186,7 +186,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Delete Artifact by Name
-        uses: jimschubert/delete-artifacts-action@v1.0.0
+        uses: jimschubert/delete-artifacts-action@v1
         with:
           log_level: 'debug'
           artifact_name: '${{ github.event.client_payload.base_name }}-by-name'
@@ -202,7 +202,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Delete Artifact by active duration (expect no deletions)
-        uses: jimschubert/delete-artifacts-action@v1.0.0
+        uses: jimschubert/delete-artifacts-action@v1
         with:
           log_level: 'debug'
           min_bytes: '0'
@@ -214,7 +214,7 @@ jobs:
           sleep 120
 
       - name: Delete Artifact by active duration (expect deletions)
-        uses: jimschubert/delete-artifacts-action@v1.0.0
+        uses: jimschubert/delete-artifacts-action@v1
         with:
           log_level: 'debug'
           min_bytes: '0'
@@ -230,7 +230,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Delete by pattern
-        uses: jimschubert/delete-artifacts-action@v1.0.0
+        uses: jimschubert/delete-artifacts-action@v1
         with:
           log_level: 'debug'
           min_bytes: '0'
@@ -248,7 +248,7 @@ jobs:
 
       - name: Delete by run id
         if: ${{ github.event.client_payload.run_id }}
-        uses: jimschubert/delete-artifacts-action@v1.0.0
+        uses: jimschubert/delete-artifacts-action@v1
         with:
           log_level: 'debug'
           min_bytes: '0'
@@ -274,7 +274,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Weekly Artifact Cleanup
-        uses: jimschubert/delete-artifacts-action@v1.0.0
+        uses: jimschubert/delete-artifacts-action@v1
         with:
           log_level: 'error'
           min_bytes: '0'
