@@ -189,7 +189,7 @@ jobs:
         uses: jimschubert/delete-artifacts-action@v1
         with:
           log_level: 'debug'
-          artifact_name: '${{ github.event.client_payload.base_name }}-by-name'
+          artifact_name: '${{ github.event.client_payload.base_name }}'
           min_bytes: '0'
 
   # Demonstrate how to delete by active_duration
