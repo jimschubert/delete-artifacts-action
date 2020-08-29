@@ -1,0 +1,152 @@
+# Copyright 2020 Jim Schubert
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Example Usage(s)
+on:
+  workflow_dispatch:
+    inputs:
+      size:
+        description: 'Target file size'
+        required: true
+        default: '1M'
+      name:
+        description: 'Artifact name'
+        required: true
+        default: 'artifact.bin'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+
+  generate:
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    outputs:
+      target_run_id: ${{ github.run_id }}
+    steps:
+      - name: Generate a file
+        run: |
+          truncate -s ${{ github.event.inputs.size }} ${{ github.event.inputs.name }}
+          echo "Created file ${{ github.event.inputs.name }} (${{ github.event.inputs.size }})"
+
+      - name: Upload artifact as ${{ github.event.inputs.name }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ github.event.inputs.name }}
+          path: ${{ github.event.inputs.name }}
+
+      - name: Upload artifact as ${{ github.event.inputs.name }}.pat
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ github.event.inputs.name }}.pat
+          path: ${{ github.event.inputs.name }}
+
+  # Demonstrate how to delete by name
+  delete-by-name:
+    needs: generate
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Upload artifact as ${{ github.event.inputs.name }}-by-name.${{ matrix.os }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ github.event.inputs.name }}-by-name.${{ matrix.os }}
+          path: ${{ github.event.inputs.name }}
+      - name: Delete Artifact by Name
+        uses: ./
+        with:
+          # GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          # GITHUB_REPOSITORY: ${{github.repository}}
+          LOG_LEVEL: debug
+          name: ${{ github.event.inputs.name }}-by-name.${{ matrix.os }}
+          min_bytes: 0
+
+  # Demonstrate how to delete by active_duration
+  delete-by-retention-duration:
+    needs: delete-by-name
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate a file
+        run: |
+          truncate -s ${{ github.event.inputs.size }} ${{ github.event.inputs.name }}
+          echo "Created file ${{ github.event.inputs.name }} (${{ github.event.inputs.size }})"
+
+      - name: Upload artifact as ${{ github.event.inputs.name }}-by-active.bin
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ github.event.inputs.name }}-by-active.bin
+          path: ${{ github.event.inputs.name }}
+
+      - name: Delete Artifact by active duration (expect no deletions)
+        uses: ./
+        with:
+          # GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          # GITHUB_REPOSITORY: ${{github.repository}}
+          LOG_LEVEL: debug
+          min_bytes: 0
+          active_duration: 30m
+
+      - name: Sleep 2 minutes
+        run: |
+          echo "Sleeping for 2 minutes, then we'll use duration 1m30s"
+          sleep 120
+
+      - name: Delete Artifact by active duration (expect no deletions)
+        uses: ./
+        with:
+          # GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          # GITHUB_REPOSITORY: ${{github.repository}}
+          LOG_LEVEL: debug
+          min_bytes: 0
+          active_duration: 1m30s
+
+  # Demonstrates how to use POSIX pattern for deleting artifacts
+  delete-by-pattern:
+    needs: delete-by-retention-duration
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete by pattern
+        uses: ./
+        with:
+          # GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          # GITHUB_REPOSITORY: ${{github.repository}}
+          LOG_LEVEL: debug
+          min_bytes: 0
+          pattern: '\.pat'
+
+  # Demonstrates how to use a run id for deleting artifacts
+  # This could be used for overall cleanup
+  delete-by-runId:
+    needs: [generate, delete-by-pattern]
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete by run id
+        if: ${{ always() }}
+        uses: ./
+        with:
+          # GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          # GITHUB_REPOSITORY: ${{github.repository}}
+          LOG_LEVEL: debug
+          min_bytes: 0
+          run_id: ${{needs.generate.outputs.target_run_id}}
