@@ -17,6 +17,12 @@ name: Update Major Version Tag
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to update major version to (e.g., v1.0.1)'
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -33,9 +39,34 @@ jobs:
       - name: Extract major version
         id: version
         run: |
-          TAG="${GITHUB_REF#refs/tags/}"
+          # Use input tag for manual trigger, or extract from GITHUB_REF for release event
+          if [ -n "${{ inputs.tag }}" ]; then
+            TAG="${{ inputs.tag }}"
+          else
+            TAG="${GITHUB_REF#refs/tags/}"
+          fi
+          
+          # Validate tag is not empty
+          if [ -z "$TAG" ]; then
+            echo "::error::Tag is empty. Please provide a valid tag."
+            exit 1
+          fi
+          
+          # Validate tag exists
+          if ! git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "::error::Tag '$TAG' does not exist."
+            exit 1
+          fi
+          
           # Extract major version (v1 from v1.0.1, v1.2.3, etc.)
           MAJOR=$(echo "$TAG" | grep -oE '^v[0-9]+')
+          
+          # Validate major version was extracted
+          if [ -z "$MAJOR" ]; then
+            echo "::error::Could not extract major version from '$TAG'. Expected format: v1.0.0"
+            exit 1
+          fi
+          
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "major=$MAJOR" >> $GITHUB_OUTPUT
           echo "Updating $MAJOR to point to $TAG"
@@ -44,5 +75,5 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -fa ${{ steps.version.outputs.major }} -m "Update ${{ steps.version.outputs.major }} to ${{ steps.version.outputs.tag }}"
+          git tag -fa ${{ steps.version.outputs.major }} ${{ steps.version.outputs.tag }} -m "Update ${{ steps.version.outputs.major }} to ${{ steps.version.outputs.tag }}"
           git push origin ${{ steps.version.outputs.major }} --force
