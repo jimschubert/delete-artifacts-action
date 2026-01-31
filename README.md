@@ -2,6 +2,8 @@
 
 A GitHub Action to help with deleting workflow artifacts.
 
+[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Delete%20Artifacts-blue?logo=github)](https://github.com/marketplace/actions/delete-artifacts)
+
 See also [jimschubert/delete-artifacts](https://github.com/jimschubert/delete-artifacts).
 
 ## Inputs
@@ -31,7 +33,7 @@ A specific Actions run identifier. You can use this to specify the current run a
 
 ### `min_bytes`
 
-**Required**
+**Required** Default: `"0"`
 
 The minimum file size in bytes. The default is "0", effectively meaning it will start off by matching all files.
 
@@ -89,7 +91,7 @@ Choose from these options:
 
 ### `dry_run`
 
-**Optional**
+**Optional** Default: `"false"`
 
 Perform a dry-run. It's recommended to do this first to be sure you have correct settings.
 
@@ -142,7 +144,7 @@ jobs:
           echo "Created file ${{ github.event.inputs.name }} (${{ github.event.inputs.size }})"
       # Upload the artifact. Artifacts expire after 90 days, which may count toward storage costs on private repositories
       - name: Upload artifact as ${{ github.event.inputs.name }}
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ github.event.inputs.name }}
           path: ${{ github.event.inputs.name }}
@@ -156,7 +158,7 @@ jobs:
       # See https://docs.github.com/en/rest/reference/repos#create-a-repository-dispatch-event
       # This requires a Personal Access Token (PAT), the GITHUB_TOKEN provided to workflows will not work.
       - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@v1.0.0
+        uses: peter-evans/repository-dispatch@v4
         with:
           # THIS MUST BE A PERSONAL ACCESS TOKEN
           token: ${{secrets.TRIGGER_TOKEN}}
@@ -183,7 +185,7 @@ jobs:
     continue-on-error: true
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
 
       - name: Delete Artifact by Name
         uses: jimschubert/delete-artifacts-action@v1
@@ -199,7 +201,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
 
       - name: Delete Artifact by active duration (expect no deletions)
         uses: jimschubert/delete-artifacts-action@v1
@@ -227,7 +229,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
 
       - name: Delete by pattern
         uses: jimschubert/delete-artifacts-action@v1
@@ -244,7 +246,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
 
       - name: Delete by run id
         if: ${{ github.event.client_payload.run_id }}
@@ -272,13 +274,39 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v6
       - name: Weekly Artifact Cleanup
         uses: jimschubert/delete-artifacts-action@v1
         with:
           log_level: 'error'
           min_bytes: '0'
 ```
+
+## Keeping Actions Updated
+
+It's highly recommended to use [Dependabot](https://docs.github.com/en/code-security/dependabot/working-with-dependabot/keeping-your-actions-up-to-date-with-dependabot) to keep your GitHub Actions up to date.
+
+Create `.github/dependabot.yml` in your repository:
+
+```yaml
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "deps"
+    groups:
+      actions:
+        patterns:
+          - "*"
+```
+
+This configuration:
+- Checks for action updates weekly
+- Groups all action updates into a single PR
+- Uses a `deps` prefix for commits (integrates well with changelog groupings)
 
 ## License
 
