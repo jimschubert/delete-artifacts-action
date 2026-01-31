@@ -204,7 +204,7 @@ jobs:
           INPUT_GITHUB_TOKEN: ${{ github.token }}
           INPUT_GITHUB_REPOSITORY: ${{ github.repository }}
           INPUT_RUN_ID: ${{ github.run_id }}
-          INPUT_PATTERN: "\.pat$"
+          INPUT_PATTERN: '\.pat$'
           INPUT_MIN_BYTES: "0"
           INPUT_LOG_LEVEL: "debug"
 
