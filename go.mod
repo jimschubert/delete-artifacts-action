@@ -14,18 +14,18 @@
 
 module github.com/jimschubert/delete-artifacts-action
 
-go 1.14
+go 1.25
 
 require (
-	github.com/jimschubert/delete-artifacts v1.0.0
-	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
-	github.com/kr/text v0.2.0 // indirect
-	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
-	github.com/sethvargo/go-githubactions v0.1.0
-	github.com/sirupsen/logrus v1.5.0
-	golang.org/x/crypto v0.0.0-20200406173513-056763e48d71 // indirect
-	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e // indirect
-	golang.org/x/sys v0.0.0-20200406155108-e3b113bbe6a4 // indirect
-	google.golang.org/appengine v1.6.5 // indirect
-	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
+	github.com/jimschubert/delete-artifacts v1.1.1
+	github.com/sethvargo/go-githubactions v1.3.2
+	github.com/sirupsen/logrus v1.9.4
+)
+
+require (
+	github.com/google/go-github/v32 v32.1.0 // indirect
+	github.com/google/go-querystring v1.2.0 // indirect
+	golang.org/x/crypto v0.47.0 // indirect
+	golang.org/x/oauth2 v0.34.0 // indirect
+	golang.org/x/sys v0.40.0 // indirect
 )
