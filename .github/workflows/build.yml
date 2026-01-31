@@ -1,0 +1,16 @@
+name: Build Go
+on:
+  push:
+    branches: [ 'main', 'master', 'feature/*' ]
+    tags: [ 'v*' ]
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build:
+    uses: jimschubert/.workflows/.github/workflows/go-build-goreleaser.yml@main
+    with:
+      golangci-lint: "v2.7.2"
+    secrets: inherit
