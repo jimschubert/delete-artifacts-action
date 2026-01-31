@@ -1,0 +1,64 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+version: 2
+before:
+  hooks:
+    - go mod download
+builds:
+  - env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X main.version={{ .Version }} -X main.commit={{ .ShortCommit }}
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+archives:
+  - formats:
+    - tar.gz
+    files:
+      - LICENSE
+      - README.md
+checksum:
+  name_template: checksums.txt
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+changelog:
+  sort: asc
+  use: github
+  groups:
+    - title: Features
+      regexp: '^.*?(feat|new|initial|support|introduce)\b.*?:'
+      order: 0
+    - title: Bug Fixes
+      regexp: '^.*?(fix|bug)\b.*?:|.*fixes$'
+      order: 1
+    - title: Documentation
+      regexp: '^.*?docs?(\(.+\))?\b.*?:'
+      order: 2
+    - title: Dependency Updates
+      regexp: '^.*?(build|deps|upgrade|update)(\(.+\))?\b.*?:'
+      order: 3
+    - title: Other Changes
+      regexp: '.*'
+      order: 999
+  filters:
+    exclude:
+      - '^chore'
+      - '^test'
+      - '^wip'
+dockers_v2:
+  - images:
+      - "jimschubert/delete-artifacts-action"
+    tags:
+      - "latest"
+      - "{{ .Tag }}"
+      - "v{{ .Major }}"
+    dockerfile: release.Dockerfile
+    labels:
+      "org.opencontainers.image.created": "{{ .Date }}"
+      "org.opencontainers.image.name": "{{ .ProjectName }}"
+      "org.opencontainers.image.revision": "{{ .FullCommit }}"
+      "org.opencontainers.image.version": "{{ .Version }}"
+    build_args:
+      APP_NAME: "{{ .ProjectName }}"

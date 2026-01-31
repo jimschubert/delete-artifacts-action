@@ -15,6 +15,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -24,7 +25,16 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+var (
+	version = "dev"
+	commit  = "none"
+)
+
 func main() {
+	log.Infof("delete-artifacts-action %s (%s)", version, commit)
+	log.Infof("https://github.com/jimschubert/delete-artifacts-action")
+	fmt.Println()
+
 	githubToken := act.GetInput("GITHUB_TOKEN")
 	if githubToken == "" {
 		var ok bool
@@ -50,14 +60,14 @@ func main() {
 	logLevel := act.GetInput("log_level")
 
 	log.WithFields(log.Fields{
-		"runIdInput": runIdInput,
-		"minBytesInput": minBytesInput,
-		"maxBytesInput": maxBytesInput,
-		"nameInput": nameInput,
-		"patternInput": patternInput,
+		"runIdInput":          runIdInput,
+		"minBytesInput":       minBytesInput,
+		"maxBytesInput":       maxBytesInput,
+		"nameInput":           nameInput,
+		"patternInput":        patternInput,
 		"activeDurationInput": activeDurationInput,
-		"dryRunInput": dryRunInput,
-		"logLevel": logLevel,
+		"dryRunInput":         dryRunInput,
+		"logLevel":            logLevel,
 	}).Info("Input arguments")
 
 	level, err := log.ParseLevel(logLevel)
