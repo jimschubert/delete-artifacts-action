@@ -68,12 +68,9 @@ jobs:
           echo "major=$MAJOR" >> $GITHUB_OUTPUT
           echo "Updating $MAJOR to point to $TAG"
 
-      - name: Git config
-        run: |
-          git config user.name "Jim Schubert"
-          git config user.email "james.schubert@gmail.com"
-
       - name: Update major version tag
         run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag -fa ${{ steps.version.outputs.major }} ${{ steps.version.outputs.tag }} -m "Update ${{ steps.version.outputs.major }} to ${{ steps.version.outputs.tag }}"
           git push origin ${{ steps.version.outputs.major }} --force
