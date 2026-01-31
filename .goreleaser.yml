@@ -26,22 +26,6 @@ snapshot:
 changelog:
   sort: asc
   use: github
-  groups:
-    - title: Features
-      regexp: '^.*?(feat|new|initial|support|introduce)\b.*?:'
-      order: 0
-    - title: Bug Fixes
-      regexp: '^.*?(fix|bug)\b.*?:|.*fixes$'
-      order: 1
-    - title: Documentation
-      regexp: '^.*?docs?(\(.+\))?\b.*?:'
-      order: 2
-    - title: Dependency Updates
-      regexp: '^.*?(build|deps|upgrade|update)(\(.+\))?\b.*?:'
-      order: 3
-    - title: Other Changes
-      regexp: '.*'
-      order: 999
   filters:
     exclude:
       - '^chore'
