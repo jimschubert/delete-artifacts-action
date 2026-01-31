@@ -32,6 +32,8 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          # PAT is required to push tags when there are any workflow modifications in that tag.
+          token: ${{ secrets.PAT }}
 
       - name: Extract major version
         id: version
