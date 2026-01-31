@@ -8,8 +8,8 @@ github.com/google/go-github/v32 v32.1.0/go.mod h1:rIEpZD9CTDQwDK9GDrtMTycQNA4JU3
 github.com/google/go-querystring v1.0.0/go.mod h1:odCYkC5MyYFN7vkCjXpyrEuKhc/BUO6wN/zVPAxq5ck=
 github.com/google/go-querystring v1.2.0 h1:yhqkPbu2/OH+V9BfpCVPZkNmUXhb2gBxJArfhIxNtP0=
 github.com/google/go-querystring v1.2.0/go.mod h1:8IFJqpSRITyJ8QhQ13bmbeMBDfmeEJZD5A0egEOmkqU=
-github.com/jimschubert/delete-artifacts v1.1.1 h1:D0OdS/HkkdPUy6NYMh+6zV943VPUgudOPRjJqZ7oy+4=
-github.com/jimschubert/delete-artifacts v1.1.1/go.mod h1:g4VRZ03A0gt+R/9oRJIEbI9juw6neK62MFP1YiuDnk8=
+github.com/jimschubert/delete-artifacts v1.1.2 h1:FkTy8G/jxmBp5p0l8tw0kb72+NmtyB0ofmRSpEvJke8=
+github.com/jimschubert/delete-artifacts v1.1.2/go.mod h1:g4VRZ03A0gt+R/9oRJIEbI9juw6neK62MFP1YiuDnk8=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/sethvargo/go-githubactions v1.3.2 h1:gkibLr/QjosgNWoCf1V58rTMRZw7xZtSB7dY4atbl1Y=
