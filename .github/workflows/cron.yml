@@ -8,7 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v6
       - name: Weekly Artifact Cleanup
         uses: jimschubert/delete-artifacts-action@v1
         with:
