@@ -11,8 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 name: Update Major Version Tag
+run-name: Promote ${{ github.event.inputs.tag }} to Major Version Tag
 
 on:
   release:
@@ -23,10 +23,6 @@ on:
         description: 'Tag to update major version to (e.g., v1.0.1)'
         required: true
         type: string
-
-permissions:
-  contents: write
-  workflows: write
 
 jobs:
   update-major-tag:
