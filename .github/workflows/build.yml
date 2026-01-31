@@ -3,6 +3,9 @@ on:
   push:
     branches: [ 'main', 'master', 'feature/*' ]
     tags: [ 'v*' ]
+    # Don't want v1 to be triggered when promoting v1.*.*, because it will fail as artifacts already exist.
+    # This works because v1.*.* also pushes the v1 docker image tag.
+    tags-ignore: [ 'v1' ]
 
 permissions:
   contents: write
