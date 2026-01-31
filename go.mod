@@ -17,7 +17,7 @@ module github.com/jimschubert/delete-artifacts-action
 go 1.25
 
 require (
-	github.com/jimschubert/delete-artifacts v1.1.1
+	github.com/jimschubert/delete-artifacts v1.1.2
 	github.com/sethvargo/go-githubactions v1.3.2
 	github.com/sirupsen/logrus v1.9.4
 )
