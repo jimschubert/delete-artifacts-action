@@ -32,6 +32,9 @@ on:
 permissions:
   contents: read
   packages: write
+  # id-token is required for attestation (signing)
+  id-token: write
+  attestations: write
 
 concurrency:
   group: ${{ github.workflow }}
@@ -139,6 +142,7 @@ jobs:
           grep -A2 'release:' .goreleaser.yml || echo "(release section added at end)"
 
       - name: Run GoReleaser (Docker only)
+        id: goreleaser
         uses: goreleaser/goreleaser-action@v6
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -149,6 +153,45 @@ jobs:
           # Reuse main config with release disabled via sed above
           # Skip non-docker publishing steps
           args: release --clean --skip=announce,validate,archive,homebrew
+
+      - name: Extract Docker image info for attestation
+        id: docker-info
+        run: |
+          # Parse goreleaser artifacts to extract Docker image info
+          ARTIFACTS='${{ steps.goreleaser.outputs.artifacts }}'
+          
+          # Extract the first Docker image name (without tag) and its digest
+          # The image name format is: registry/image:tag or image:tag
+          # We need: registry/image (with docker.io as default if no registry)
+          
+          # Get unique image digests (all tags point to same digest)
+          DIGEST=$(echo "$ARTIFACTS" | jq -r '[.[] | select(.type == "Docker Image")] | .[0].extra.Digest')
+          
+          # Get image name from first Docker image, strip the tag
+          FULL_IMAGE=$(echo "$ARTIFACTS" | jq -r '[.[] | select(.type == "Docker Image")] | .[0].name')
+          
+          # Remove tag (everything after last colon)
+          IMAGE_NAME="${FULL_IMAGE%:*}"
+          
+          # If no registry (no slash before image name), prepend docker.io
+          if [[ "$IMAGE_NAME" != *"/"* ]]; then
+            IMAGE_NAME="docker.io/$IMAGE_NAME"
+          elif [[ "$IMAGE_NAME" != *"."* ]]; then
+            # Has slash but no dot in registry part = Docker Hub user/image
+            IMAGE_NAME="docker.io/$IMAGE_NAME"
+          fi
+          
+          echo "image-name=$IMAGE_NAME" >> $GITHUB_OUTPUT
+          echo "digest=$DIGEST" >> $GITHUB_OUTPUT
+          echo "Docker image for attestation: $IMAGE_NAME@$DIGEST"
+
+      - name: Attest Docker Image
+        uses: actions/attest-build-provenance@v2
+        if: steps.docker-info.outputs.image-name != ''  && steps.docker-info.outputs.digest != ''
+        with:
+          subject-name: ${{ steps.docker-info.outputs.image-name }}
+          subject-digest: ${{ steps.docker-info.outputs.digest }}
+          push-to-registry: true
 
       - name: Cleanup
         if: always()

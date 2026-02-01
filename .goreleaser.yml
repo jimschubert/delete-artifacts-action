@@ -19,6 +19,9 @@ archives:
     files:
       - LICENSE
       - README.md
+sboms:
+  - id: archive
+    artifacts: archive
 checksum:
   name_template: checksums.txt
 snapshot:
@@ -31,6 +34,8 @@ changelog:
       - '^chore'
       - '^test'
       - '^wip'
+docker_digest:
+  name_template: "digests.txt"
 dockers_v2:
   - images:
       - "jimschubert/delete-artifacts-action"
