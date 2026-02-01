@@ -20,8 +20,8 @@ name: Weekly Docker Rebuild
 
 on:
   schedule:
-    # Every Sunday at 16:00 UTC (12:00 AM EDT, 11:00 AM EST)
-    - cron: "0 16 * * 0"
+    # Every Sunday at 17:00 UTC (1:00 PM EDT, 12:00 PM EST)
+    - cron: "0 17 * * 0"
   workflow_dispatch:
     inputs:
       tag:
@@ -114,6 +114,30 @@ jobs:
           fi
           echo "✅ Docker login successful"
 
+      # This looks a bit clunky, but is attempting to be safe in case .goreleaser.yml is ever
+      # updated to incldue a release config section.
+      # It needs to account for release existing or not, as well as disable existing or not.
+      # and disable can exist anywhere under release.
+      # To test this sed operation on Mac, really you need Gnu sed. Otherwise, use sed -i '' locally when testing.
+      - name: Disable GitHub Release in goreleaser config
+        run: |
+          # Check if 'release:' section exists
+          if grep -q '^release:' .goreleaser.yml; then
+            # Check if 'disable:' already exists under release
+            if grep -A1 '^release:' .goreleaser.yml | grep -q 'disable:'; then
+              echo "release.disable already exists, updating to true"
+              sed -i 's/^\([[:space:]]*disable:\).*/\1 true/' .goreleaser.yml
+            else
+              echo "Adding disable: true to existing release section"
+              sed -i '/^release:/a\  disable: true' .goreleaser.yml
+            fi
+          else
+            echo "Adding release section with disable: true"
+            printf '\nrelease:\n  disable: true\n' >> .goreleaser.yml
+          fi
+          echo "Updated .goreleaser.yml:"
+          grep -A2 'release:' .goreleaser.yml || echo "(release section added at end)"
+
       - name: Run GoReleaser (Docker only)
         uses: goreleaser/goreleaser-action@v6
         env:
@@ -122,9 +146,9 @@ jobs:
         with:
           distribution: goreleaser
           version: latest
-          # Reuse main config, skip everything except build and docker
-          # To see list of available pipes run: goreleaser release --help
-          args: release --clean --skip=announce,publish,validate,archive,homebrew
+          # Reuse main config with release disabled via sed above
+          # Skip non-docker publishing steps
+          args: release --clean --skip=announce,validate,archive,homebrew
 
       - name: Cleanup
         if: always()
