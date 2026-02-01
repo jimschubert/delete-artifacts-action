@@ -44,5 +44,7 @@ dockers_v2:
       "org.opencontainers.image.name": "{{ .ProjectName }}"
       "org.opencontainers.image.revision": "{{ .FullCommit }}"
       "org.opencontainers.image.version": "{{ .Version }}"
+      "org.opencontainers.image.source": "https://github.com/jimschubert/delete-artifacts-action"
+      "org.opencontainers.image.licenses": "Apache-2.0"
     build_args:
       APP_NAME: "{{ .ProjectName }}"
