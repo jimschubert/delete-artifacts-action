@@ -1,0 +1,124 @@
+# Copyright 2020 Jim Schubert
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Weekly Docker Rebuild
+
+on:
+  schedule:
+    # Every Sunday at 16:00 UTC (12:00 AM EDT, 11:00 AM EST)
+    - cron: "0 16 * * 0"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Specific tag to rebuild (e.g., v1.0.2). Leave empty for latest semver tag.'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  rebuild-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Docker credentials
+        id: check-creds
+        run: |
+          if [ -z "${{ secrets.DOCKER_USERNAME }}" ]; then
+            echo "::error::DOCKER_USERNAME secret is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.DOCKER_PASSWORD }}" ]; then
+            echo "::error::DOCKER_PASSWORD secret is not set"
+            exit 1
+          fi
+          echo "✅ Docker credentials are configured"
+
+      - name: Find latest semver tag
+        id: find-tag
+        run: |
+          if [ -n "${{ inputs.tag }}" ]; then
+            TAG="${{ inputs.tag }}"
+          else
+            # Fetch tags, filter to major.minor.patch format, sort by version descending, take recent
+            # the sort -V flag is version sort such that v1.0.9 < v1.0.10 (string sort would be v10 < v2)
+            # This might be overkill but I don't trust that gh api will always return tags in desc order.
+            TAG=$(gh api repos/${{ github.repository }}/tags --jq '.[].name' \
+              | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' \
+              | sort -rV \
+              | head -1)
+          fi
+          
+          if [ -z "$TAG" ]; then
+            echo "::error::No semver tag found"
+            exit 1
+          fi
+          
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "Found tag: $TAG"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.find-tag.outputs.tag }}
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+          cache: true
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker Login
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo "${DOCKER_PASSWORD}" | docker login --username "${DOCKER_USERNAME}" --password-stdin
+          if [ $? -ne 0 ]; then
+            echo "::error::Docker login failed"
+            exit 1
+          fi
+          echo "✅ Docker login successful"
+
+      - name: Run GoReleaser (Docker only)
+        uses: goreleaser/goreleaser-action@v6
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          BUILDX_BUILDER: ${{ steps.buildx.outputs.name }}
+        with:
+          distribution: goreleaser
+          version: latest
+          # Reuse main config, skip everything except build and docker
+          # To see list of available pipes run: goreleaser release --help
+          args: release --clean --skip=announce,publish,validate,archive,homebrew
+
+      - name: Cleanup
+        if: always()
+        run: |
+          rm -f ${HOME}/.docker/config.json
