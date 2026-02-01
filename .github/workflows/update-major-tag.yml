@@ -11,6 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# Update Major Version Tag: Automatically updates the major version tag (e.g., v1)
+# to point to the latest patch release (e.g., v1.0.2) when a release is published.
+# This allows users to reference @v1 and always get the latest v1.x.x version.
+# Can also be triggered manually to force-update a major tag to a specific version.
+
 name: Update Major Version Tag
 run-name: Promote ${{ github.event.inputs.tag }} to Major Version Tag
 

@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# PR Integration Test: Runs end-to-end tests on pull requests that modify any Go (or artifact) related code.
+# Creates test artifacts and validates deletion by active_duration, name, pattern, and run_id filters.
+# Ensures the delete-artifacts-action works correctly before merging.
+
 name: PR Integration Test
 on:
   pull_request:

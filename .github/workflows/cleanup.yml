@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Cleanup workflow: Demonstrates various deletion strategies for artifacts.
+# Triggered via repository_dispatch from the generate workflow. Shows examples
+# of deleting by name, active_duration, pattern, and run_id.
+
 name: Cleanup
 on:
   repository_dispatch:

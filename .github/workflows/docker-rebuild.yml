@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Weekly Docker Rebuild: Periodically rebuilds and pushes Docker images for the
+# latest major.minor.patch tag. Keeps images fresh with updated base images and security patches
+# without creating new GitHub releases. Can also be triggered manually with a specific tag.
+
 name: Weekly Docker Rebuild
 
 on:

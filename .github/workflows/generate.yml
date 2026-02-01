@@ -12,6 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Generate workflow: Creates test artifacts and triggers the cleanup workflow.
+# Used for manual testing of the delete-artifacts-action. Creates artifacts with
+# various naming patterns to test different deletion strategies.
+# NOTE: If there is a failure, cron.yml will delete weekly.
+# This is to avoid filling up the repository with artifacts before the configured retention period.
+
 name: Generate artifacts and trigger cleanup
 on:
   workflow_dispatch:
