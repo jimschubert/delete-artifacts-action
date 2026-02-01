@@ -20,10 +20,9 @@ name: Build Go
 on:
   push:
     branches: [ 'main', 'master' ]
-    tags: [ 'v*' ]
     # Don't want v1 to be triggered when promoting v1.*.*, because it will fail as artifacts already exist.
     # This works because v1.*.* also pushes the v1 docker image tag.
-    tags-ignore: [ 'v1' ]
+    tags: [ 'v[0-9]+.[0-9]+.[0-9]+' ]
 
 permissions:
   contents: write
