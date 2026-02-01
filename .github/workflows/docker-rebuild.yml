@@ -33,6 +33,10 @@ permissions:
   contents: read
   packages: write
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false  # Don't cancel in-progress Docker builds
+
 defaults:
   run:
     shell: bash
