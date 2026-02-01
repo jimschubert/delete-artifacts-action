@@ -2,6 +2,10 @@
 
 A GitHub Action to help with deleting workflow artifacts.
 
+[![Build Status](https://github.com/jimschubert/delete-artifacts-action/actions/workflows/build.yml/badge.svg)](https://github.com/jimschubert/delete-artifacts-action/actions/workflows/build.yml)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/jimschubert/delete-artifacts-action)](https://github.com/jimschubert/delete-artifacts-action/blob/master/go.mod)
+[![License](https://img.shields.io/github/license/jimschubert/delete-artifacts-action)](https://github.com/jimschubert/delete-artifacts-action/blob/master/LICENSE)
+[![GitHub Release](https://img.shields.io/github/v/release/jimschubert/delete-artifacts-action)](https://github.com/jimschubert/delete-artifacts-action/releases/latest)
 [![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Delete%20Artifacts-blue?logo=github)](https://github.com/marketplace/actions/delete-artifacts)
 
 See also [jimschubert/delete-artifacts](https://github.com/jimschubert/delete-artifacts).
