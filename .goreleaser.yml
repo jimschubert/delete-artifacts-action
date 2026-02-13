@@ -44,6 +44,10 @@ dockers_v2:
       - "{{ .Tag }}"
       - "v{{ .Major }}"
     dockerfile: release.Dockerfile
+    annotations:
+      "project": "{{.ProjectName}}"
+      "org.opencontainers.image.description": "GitHub Action to delete artifacts from GitHub Releases."
+      "org.opencontainers.image.url": "https://github.com/jimschubert/delete-artifacts-action"
     labels:
       "org.opencontainers.image.created": "{{ .Date }}"
       "org.opencontainers.image.name": "{{ .ProjectName }}"
