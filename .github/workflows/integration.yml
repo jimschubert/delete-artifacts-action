@@ -53,25 +53,25 @@ jobs:
           echo "Created test-artifact.bin (1M)"
 
       - name: Upload artifact for active_duration test
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: "${{ env.ARTIFACT_PREFIX }}-by-active"
           path: test-artifact.bin
 
       - name: Upload artifact for name test
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: "${{ env.ARTIFACT_PREFIX }}-by-name"
           path: test-artifact.bin
 
       - name: Upload artifact for pattern test
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: "${{ env.ARTIFACT_PREFIX }}.pat"
           path: test-artifact.bin
 
       - name: Upload artifact for run_id test
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: "${{ env.ARTIFACT_PREFIX }}-by-runid"
           path: test-artifact.bin
