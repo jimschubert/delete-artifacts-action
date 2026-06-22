@@ -49,25 +49,25 @@ jobs:
           echo "Created file ${{ github.event.inputs.name }} (${{ github.event.inputs.size }})"
 
       - name: Upload artifact as ${{ github.event.inputs.name }}
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ github.event.inputs.name }}
           path: ${{ github.event.inputs.name }}
 
       - name: Upload artifact as ${{ github.event.inputs.name }}.pat
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ github.event.inputs.name }}.pat
           path: ${{ github.event.inputs.name }}
 
       - name: Upload artifact as ${{ github.event.inputs.name }}-by-active.bin
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ github.event.inputs.name }}-by-active.bin
           path: ${{ github.event.inputs.name }}
 
       - name: Upload artifact as ${{ github.event.inputs.name }}-by-name
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ github.event.inputs.name }}-by-name
           path: ${{ github.event.inputs.name }}
