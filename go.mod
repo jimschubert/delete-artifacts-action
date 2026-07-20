@@ -18,7 +18,7 @@ go 1.25
 
 require (
 	github.com/jimschubert/delete-artifacts v1.1.3
-	github.com/sethvargo/go-githubactions v1.3.2
+	github.com/sethvargo/go-githubactions v1.4.0
 	github.com/sirupsen/logrus v1.9.4
 )
 
